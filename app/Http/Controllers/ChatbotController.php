@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Throwable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Sentry\State\Hub as Sentry;
@@ -26,16 +27,12 @@ class ChatbotController extends Controller
 
                 try {
                     $callable($input);
-                } catch (\Throwable $th) {
+                } catch (Throwable $th) {
                     $sentry->captureException($th);
-                } finally {
-                    return response(null, 204);
                 }
 
             }
 
         }
-
-        throw new Exception("Error processing request", 1);
     }
 }
