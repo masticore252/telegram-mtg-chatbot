@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
-
+use App\Http\Controllers\ChatbotController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -13,4 +13,4 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::post(env('TELEGRAM_WEBHOOK_ROUTE'), 'ChatbotController');
+Route::post(env('TELEGRAM_WEBHOOK_ROUTE'), ChatbotController::class);
