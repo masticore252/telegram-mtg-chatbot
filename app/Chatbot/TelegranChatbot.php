@@ -22,17 +22,29 @@ class TelegramChatbot
         $chatId = $input['message']['chat']['id'];
         $messageId = $input['message']['message_id'];
 
-        $queryArray = explode(' ', $input['message']['text']);
+        $text = $input['message']['text'];
+        $entities = array_filter($input['message']['entities'], function($entity){ return $entity['type'] === 'bot_command'; });
 
-        $command = array_shift($queryArray);
-        $query = implode(' ', $queryArray);
+        foreach ($entities as $entity) {
 
-        switch ($command) {
+            $commandStart = $entity['offset'];
+            $commandLength = $entity['length'];
 
-            case '/card':
-                return $this->handleCardCommand($query, $chatId, $messageId);
-            break;
+            $queryStart = 1 + $commandStart + $commandLength;
+            $queryEndPos = mb_strpos($text, "\n", $queryStart);
+            $queryEnd = $queryEndPos !== false ? $queryEndPos - $queryStart : null;
+
+            $command = mb_substr($text, $commandStart, $commandLength);
+            $query = mb_substr($text, $queryStart, $queryEnd);
+
+            switch ($command) {
+                case '/card':
+                    $this->handleCardCommand($query, $chatId, $messageId);
+                break;
+            }
         }
+
+
     }
 
     public function handleInlineQuery($input)
