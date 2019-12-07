@@ -17,7 +17,7 @@ return [
     |
     */
 
-    'default' => env('LOG_CHANNEL', 'stack'),
+    'default' => env('LOG_CHANNEL', 'heroku'),
 
     /*
     |--------------------------------------------------------------------------
@@ -35,6 +35,12 @@ return [
     */
 
     'channels' => [
+        'heroku' => [
+            'driver' => 'stack',
+            'channels' => ['errorlog'],
+            'ignore_exceptions' => false,
+        ],
+
         'stack' => [
             'driver' => 'stack',
             'channels' => ['daily'],
