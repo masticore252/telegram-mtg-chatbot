@@ -75,17 +75,35 @@ class TelegramChatbot
     {
         $url = 'https://api.scryfall.com/cards/named?'.http_build_query([ 'fuzzy' => $query ]);
         $response = $this->httpClient->request('get', $url);
-        $cardData = json_decode($response->getBody(), true);
-        $photo = $cardData['image_uris']['normal'];
+        $data = json_decode($response->getBody(), true);
 
-        return $this->sendphoto($chatId, $photo, ['reply_to_message_id' => $messageId]);
+        $cardData = [];
+
+        if($data['layout'] == 'transform') {
+
+            foreach ($data['card_faces'] as $face) {
+                $photos[] = [
+                    'type' => 'photo',
+                    'media' => $face['image_uris']['normal']
+                ];
+            }
+
+            return $this->sendMediaGroup($chatId, $photos, $messageId);
+
+        } else {
+
+            return $this->sendphoto($chatId, $data['image_uris']['normal'], $messageId);
+
+        }
+
     }
 
-    protected function sendPhoto($chatId, $photo, $extra)
+    protected function sendPhoto($chatId, $photo, $replyTo, $extra = [])
     {
         $data = array_merge_recursive( $extra, [
             'chat_id' => $chatId,
             'photo' => $photo,
+            'reply_to_message_id' => $replyTo,
         ]);
 
         $url = $this->url.'/sendPhoto?'. http_build_query($data);
@@ -98,11 +116,12 @@ class TelegramChatbot
         ];
     }
 
-    protected function sendMessage($chatId, $text, $extra)
+    protected function sendMessage($chatId, $text, $replyTo, $extra)
     {
         $data = array_merge_recursive( $extra, [
             'chat_id' => $chatId,
             'text' => $text,
+            'reply_to_message_id' => $replyTo,
         ]);
 
         $url = $this->url.'/sendMessage?'. http_build_query($data);
@@ -113,6 +132,27 @@ class TelegramChatbot
             'telegran_response' => json_decode((string)$response->getBody(), true),
             'endpoint' => '/sendMessage'
         ];
+    }
+
+    protected function sendMediaGroup($chatId, $media, $replyTo, $disableNotification = false)
+    {
+
+        $data = [
+            'chat_id' => $chatId,
+            'media' => $media,
+            'reply_to_message_id' => $replyTo,
+            'disable_notification' => $disableNotification
+        ];
+
+        $url = $this->url.'/sendMediaGroup';
+
+        $response = $this->httpClient->request('POST', $url, [
+            'body' => json_encode($data),
+            'headers' => [
+                'Content-Type' => 'application/json',
+            ],
+        ]);
+
     }
 
 }
