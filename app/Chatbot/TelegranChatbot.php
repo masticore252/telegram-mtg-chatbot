@@ -38,6 +38,12 @@ class TelegramChatbot
             $query = mb_substr($text, $queryStart, $queryEnd);
 
             switch ($command) {
+                case '/start':
+                    $this->handleStartCommand();
+                break;
+                case '/help':
+                    $this->handleHelpCommand();
+                break;
                 case '/card':
                     $this->handleCardCommand($query, $chatId, $messageId);
                 break;
@@ -51,6 +57,18 @@ class TelegramChatbot
     {
         /** TODO not implemented yet*/
         throw new Exception('inline_query type is not handled yet');
+    }
+
+    public function handleStartCommand($input)
+    {
+        /** TODO not implemented yet*/
+        throw new Exception('/start command is not handled yet');
+    }
+
+    public function handleHelpCommand($input)
+    {
+        /** TODO not implemented yet*/
+        throw new Exception('/help command is not handled yet');
     }
 
     protected function handleCardCommand($query, $chatId, $messageId)
