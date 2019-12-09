@@ -87,6 +87,26 @@ class TelegramChatbot
                             'id' => $card['multiverse_ids'][$pos++],
                             'photo_url' => $face['image_uris']['normal'],
                             'thumb_url' => $face['image_uris']['small'],
+                            'reply_markup' => [
+                                'inline_keyboard' => [
+                                    [
+                                        [
+                                            'text' => 'Rulings',
+                                            'callback_data' => 'rulings|'.$card['multiverse_ids'][$pos++]
+                                        ],
+                                        [
+                                            'text' => 'Legalities',
+                                            'callback_data' => 'legalities|'.$card['multiverse_ids'][$pos++]
+                                        ]
+                                    ],
+                                    [
+                                        [
+                                            'text' => 'Gatherer',
+                                            'url' => $card['related_uris']['gatherer']
+                                        ]
+                                    ],
+                                ]
+                            ],
                         ];
 
                     }
@@ -97,6 +117,26 @@ class TelegramChatbot
                         'id' => $card['multiverse_ids'][0],
                         'photo_url' => $card['image_uris']['normal'],
                         'thumb_url' => $card['image_uris']['small'],
+                        'reply_markup' => [
+                            'inline_keyboard' => [
+                                [
+                                    [
+                                        'text' => 'Rulings',
+                                        'callback_data' => 'rulings|'.$card['multiverse_ids'][0]
+                                    ],
+                                    [
+                                        'text' => 'Legalities',
+                                        'callback_data' => 'legalities|'.$card['multiverse_ids'][0]
+                                    ]
+                                ],
+                                [
+                                    [
+                                        'text' => 'Gatherer',
+                                        'url' => $card['related_uris']['gatherer']
+                                    ]
+                                ],
+                            ]
+                        ],
                     ];
                 }
 
