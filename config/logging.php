@@ -1,5 +1,6 @@
 <?php
 
+use Monolog\Logger;
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
@@ -17,7 +18,7 @@ return [
     |
     */
 
-    'default' => env('LOG_CHANNEL', 'heroku'),
+    'default' => env('LOG_CHANNEL', 'stack'),
 
     /*
     |--------------------------------------------------------------------------
@@ -35,15 +36,16 @@ return [
     */
 
     'channels' => [
-        'heroku' => [
+        'stack' => [
             'driver' => 'stack',
-            'channels' => ['errorlog'],
+            'channels' => ['errorlog', 'sentry'],
             'ignore_exceptions' => false,
         ],
 
-        'stack' => [
-            'driver' => 'stack',
-            'channels' => ['daily'],
+        'sentry' => [
+            'driver' => 'sentry',
+            'bubble' => true,
+            'level'  => Logger::ERROR,
             'ignore_exceptions' => false,
         ],
 
