@@ -63,7 +63,7 @@ class TelegramChatbot
     {
         $id = $input['inline_query']['id'];
         $query = [
-            'q' => urlencode($input['inline_query']['query'])
+            'q' => $input['inline_query']['query']
         ];
 
         $url = 'https://api.scryfall.com/cards/search?'.http_build_query($query);
