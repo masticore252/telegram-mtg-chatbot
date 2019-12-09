@@ -46,6 +46,10 @@ class TelegramChatbot
                     $this->handleHelpCommand($chatId, $messageId);
                 break;
 
+                case '/info':
+                    $this->handleInfoCommand($chatId, $messageId);
+                break;
+
                 case '/card':
                     $this->handleCardCommand($query, $chatId, $messageId);
                 break;
@@ -129,6 +133,20 @@ class TelegramChatbot
     public function handleHelpCommand($chatId, $messageId)
     {
         $text = "Coming soon!\n";
+        $this->sendMessage($chatId, $text, $messageId);
+    }
+
+    public function handleInfoCommand($chatId, $messageId)
+    {
+        $text = "I was created by Albert Vásquez (@masticore252) out of frustration because he could not find a bot ";
+        $text .= "with all the functionality he wanted\n\n";
+
+        $text .= "Also, I'm open source!\n";
+        $text .= "I'm being developed with PHP (yes, I know 🙄) and Laravel framework\n";
+        $text .= "you can se my code in my github repository: https://github.com/masticore252/telegram-mtg-chatbot.\n\n";
+
+        $text .= "Got a suggestion? see something wrong with me? open an issue on my github\n";
+        $text .= "or fix it yourself in a pull request, that would be awesome!\n";
         $this->sendMessage($chatId, $text, $messageId);
     }
 
