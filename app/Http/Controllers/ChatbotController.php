@@ -5,14 +5,14 @@ namespace App\Http\Controllers;
 use Throwable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Sentry\State\Hub as Sentry;
+use Illuminate\Log\LogManager as Log;
 
 use App\Chatbot\TelegramChatbot;
 
 class ChatbotController extends Controller
 {
 
-    public function __invoke(Request $request, TelegramChatbot $chatbot, Sentry $sentry) {
+    public function __invoke(Request $request, TelegramChatbot $chatbot, Log $log) {
 
         $input = new Collection($request->all());
 
@@ -28,7 +28,13 @@ class ChatbotController extends Controller
                 try {
                     $callable($input);
                 } catch (Throwable $th) {
-                    $sentry->captureException($th);
+                    $log->error(get_class($th), [
+                        'message' => $th->getMessage(),
+                        'code' => $th->getCode(),
+                        'file' => $th->getFile(),
+                        'line' => $th->getLine(),
+                        'trace' => $th->getTraceAsString(),
+                    ]);
                 }
 
             }
