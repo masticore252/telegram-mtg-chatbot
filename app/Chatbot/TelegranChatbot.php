@@ -31,7 +31,7 @@ class TelegramChatbot
             $commandLength = $entity['length'];
 
             $queryStart = 1 + $commandStart + $commandLength;
-            $queryEndPos = mb_strpos($text, "\n", $queryStart);
+            $queryEndPos = (mb_strlen($text) <= $commandLength) ? false : mb_strpos($text, "\n", $queryStart);
             $queryEnd = $queryEndPos !== false ? $queryEndPos - $queryStart : null;
 
             $command = mb_substr($text, $commandStart, $commandLength);
@@ -39,11 +39,13 @@ class TelegramChatbot
 
             switch ($command) {
                 case '/start':
-                    $this->handleStartCommand();
+                    $this->handleStartCommand($chatId, $messageId);
                 break;
+
                 case '/help':
-                    $this->handleHelpCommand();
+                    $this->handleHelpCommand($chatId, $messageId);
                 break;
+
                 case '/card':
                     $this->handleCardCommand($query, $chatId, $messageId);
                 break;
@@ -111,16 +113,23 @@ class TelegramChatbot
         $this->answerInlineQuery($id, $results, 60*60*24*7);
     }
 
-    public function handleStartCommand($input)
+    public function handleStartCommand($chatId, $messageId)
     {
-        /** TODO not implemented yet*/
-        throw new Exception('/start command is not handled yet');
+        $text = "Hi! I'm a Magic: the gathering bot\n";
+        $text .= "I can help you find favorite cards\n";
+        $text .= "just open any of your chats and type '@albertMTGbot Jace' (or your favorite card name) ";
+        $text .= "in the message field and I'll show a list of search results\n";
+        $text .= "tap one to see to preview it, tap ✅ to send it\n";
+        $text .= "Easy peasy!\n\n";
+        $text .= "You can also search more than just card names, use the full syntax from scryfall.com\n\n";
+        $text .= "Read all about it here: https://scryfall.com/docs/syntax\n\n";
+        $this->sendMessage($chatId, $text, $messageId);
     }
 
-    public function handleHelpCommand($input)
+    public function handleHelpCommand($chatId, $messageId)
     {
-        /** TODO not implemented yet*/
-        throw new Exception('/help command is not handled yet');
+        $text = "Coming soon!\n";
+        $this->sendMessage($chatId, $text, $messageId);
     }
 
     protected function handleCardCommand($query, $chatId, $messageId)
@@ -150,7 +159,7 @@ class TelegramChatbot
 
     }
 
-    protected function sendPhoto($chatId, $photo, $replyTo, $extra = [])
+    protected function sendPhoto($chatId, $photo, $replyTo = false, $extra = [])
     {
         $data = array_merge_recursive( $extra, [
             'chat_id' => $chatId,
@@ -158,7 +167,7 @@ class TelegramChatbot
             'reply_to_message_id' => $replyTo,
         ]);
 
-        $url = $this->url.'/sendPhoto?'. http_build_query($data);
+        $url = $this->url.'/sendPhoto?'. http_build_query(array_filter($data));
         $response = $this->httpClient->request('GET', $url);
 
         return [
@@ -168,7 +177,7 @@ class TelegramChatbot
         ];
     }
 
-    protected function sendMessage($chatId, $text, $replyTo, $extra)
+    protected function sendMessage($chatId, $text, $replyTo = false, $extra = [])
     {
         $data = array_merge_recursive( $extra, [
             'chat_id' => $chatId,
@@ -176,7 +185,7 @@ class TelegramChatbot
             'reply_to_message_id' => $replyTo,
         ]);
 
-        $url = $this->url.'/sendMessage?'. http_build_query($data);
+        $url = $this->url.'/sendMessage?'. http_build_query(array_filter($data));
         $response = $this->httpClient->request('GET', $url);
 
         return [
