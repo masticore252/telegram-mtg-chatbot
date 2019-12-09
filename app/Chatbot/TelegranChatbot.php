@@ -55,8 +55,60 @@ class TelegramChatbot
 
     public function handleInlineQuery($input)
     {
-        /** TODO not implemented yet*/
-        throw new Exception('inline_query type is not handled yet');
+        $id = $input['inline_query']['id'];
+        $query = [
+            'q' => urlencode($input['inline_query']['query'])
+        ];
+
+        $url = 'https://api.scryfall.com/cards/search?'.http_build_query($query);
+        $rawResponse = $this->httpClient->request('get', $url, ['http_errors' => false]);
+        $response = json_decode($rawResponse->getBody(), true);
+
+        $results = [];
+
+
+        if($response['object'] == 'list') {
+
+            foreach ($response['data'] as $card) {
+
+                if ($card['layout'] == 'transform') {
+
+                    $pos = 0;
+                    foreach ($card['card_faces'] as $face) {
+
+                        $results[] = [
+                            'type' => 'photo',
+                            'id' => $card['multiverse_ids'][$pos++],
+                            'photo_url' => $face['image_uris']['normal'],
+                            'thumb_url' => $face['image_uris']['small'],
+                        ];
+
+                    }
+
+                } else {
+                    $results[] = [
+                        'type' => 'photo',
+                        'id' => $card['multiverse_ids'][0],
+                        'photo_url' => $card['image_uris']['normal'],
+                        'thumb_url' => $card['image_uris']['small'],
+                    ];
+                }
+
+            }
+
+        } else {
+            $results[] = [
+                'type' => 'article',
+                'id' => 1,
+                'title' => 'No results',
+                'description' => $response['details'],
+                'input_message_content' => [
+                    'message_text' => $response['details'],
+                ]
+            ];
+        }
+
+        $this->answerInlineQuery($id, $results, 5);//60*60*24*7);
     }
 
     public function handleStartCommand($input)
@@ -153,6 +205,23 @@ class TelegramChatbot
             ],
         ]);
 
+    }
+
+    protected function answerInlineQuery($id, $results, $cacheTime)
+    {
+        $url = $this->url.'/answerInlineQuery';
+        $data = [
+            'inline_query_id' => $id,
+            'results' => $results,
+            'cache_time' => $cacheTime
+        ];
+
+        $this->httpClient->request('POST', $url, [
+            'body' => json_encode($data),
+            'headers' => [
+                'Content-Type' => 'application/json',
+            ],
+        ]);
     }
 
 }
