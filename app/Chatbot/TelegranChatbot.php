@@ -108,7 +108,7 @@ class TelegramChatbot
             ];
         }
 
-        $this->answerInlineQuery($id, $results, 5);//60*60*24*7);
+        $this->answerInlineQuery($id, $results, 60*60*24*7);
     }
 
     public function handleStartCommand($input)
