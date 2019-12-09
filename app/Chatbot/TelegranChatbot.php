@@ -157,7 +157,7 @@ class TelegramChatbot
         $this->answerInlineQuery($id, $results, 60*60*24*7);
     }
 
-    public function handleStartCommand($chatId, $messageId)
+    protected function handleStartCommand($chatId, $messageId)
     {
         $text = "Hi! I'm a Magic: the gathering bot\n";
         $text .= "I can help you find favorite cards\n";
@@ -170,13 +170,13 @@ class TelegramChatbot
         $this->sendMessage($chatId, $text, $messageId);
     }
 
-    public function handleHelpCommand($chatId, $messageId)
+    protected function handleHelpCommand($chatId, $messageId)
     {
         $text = "Coming soon!\n";
         $this->sendMessage($chatId, $text, $messageId);
     }
 
-    public function handleInfoCommand($chatId, $messageId)
+    protected function handleInfoCommand($chatId, $messageId)
     {
         $text = "I was created by Albert Vásquez (@masticore252) out of frustration because he could not find a bot ";
         $text .= "with all the functionality he wanted\n\n";
