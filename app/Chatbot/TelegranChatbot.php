@@ -91,16 +91,6 @@ class TelegramChatbot
                                 'inline_keyboard' => [
                                     [
                                         [
-                                            'text' => 'Rulings',
-                                            'callback_data' => 'rulings|'.$card['multiverse_ids'][$pos++]
-                                        ],
-                                        [
-                                            'text' => 'Legalities',
-                                            'callback_data' => 'legalities|'.$card['multiverse_ids'][$pos++]
-                                        ]
-                                    ],
-                                    [
-                                        [
                                             'text' => 'Gatherer',
                                             'url' => $card['related_uris']['gatherer']
                                         ]
@@ -119,16 +109,6 @@ class TelegramChatbot
                         'thumb_url' => $card['image_uris']['small'],
                         'reply_markup' => [
                             'inline_keyboard' => [
-                                [
-                                    [
-                                        'text' => 'Rulings',
-                                        'callback_data' => 'rulings|'.$card['multiverse_ids'][0]
-                                    ],
-                                    [
-                                        'text' => 'Legalities',
-                                        'callback_data' => 'legalities|'.$card['multiverse_ids'][0]
-                                    ]
-                                ],
                                 [
                                     [
                                         'text' => 'Gatherer',
@@ -163,10 +143,10 @@ class TelegramChatbot
         $text .= "I can help you find favorite cards\n";
         $text .= "just open any of your chats and type '@albertMTGbot Jace' (or your favorite card name) ";
         $text .= "in the message field and I'll show a list of search results\n";
-        $text .= "tap one to see to preview it, tap ✅ to send it\n";
+        $text .= "tap one to preview it, then tap ✅ to send it\n";
         $text .= "Easy peasy!\n\n";
-        $text .= "You can also search more than just card names, use the full syntax from scryfall.com\n\n";
-        $text .= "Read all about it here: https://scryfall.com/docs/syntax\n\n";
+        $text .= "I support more complex querys, type /help to know more\n\n";
+        // $text .= "Read all about it here: https://scryfall.com/docs/syntax\n\n";
         $this->sendMessage($chatId, $text, $messageId);
     }
 
