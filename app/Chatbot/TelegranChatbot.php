@@ -79,12 +79,11 @@ class TelegramChatbot
 
                 if ($card['layout'] == 'transform') {
 
-                    $pos = 0;
                     foreach ($card['card_faces'] as $face) {
 
                         $results[] = [
                             'type' => 'photo',
-                            'id' => $card['multiverse_ids'][$pos++],
+                            'id' => $card['id'],
                             'photo_url' => $face['image_uris']['normal'],
                             'thumb_url' => $face['image_uris']['small'],
                             'reply_markup' => [
@@ -104,7 +103,7 @@ class TelegramChatbot
                 } else {
                     $results[] = [
                         'type' => 'photo',
-                        'id' => $card['multiverse_ids'][0],
+                        'id' => $card['id'],
                         'photo_url' => $card['image_uris']['normal'],
                         'thumb_url' => $card['image_uris']['small'],
                         'reply_markup' => [
