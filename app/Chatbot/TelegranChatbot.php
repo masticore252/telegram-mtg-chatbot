@@ -93,7 +93,7 @@ class TelegramChatbot
                                     [
                                         [
                                             'text' => 'Gatherer',
-                                            'url' => $card['related_uris']['gatherer'] ?? $card['uri']
+                                            'url' => $card['related_uris']['gatherer'] ?? $card['scryfall_uri']
                                         ]
                                     ],
                                 ]
@@ -118,7 +118,7 @@ class TelegramChatbot
                                 [
                                     [
                                         'text' => 'Gatherer',
-                                        'url' => $card['related_uris']['gatherer'] ?? $card['uri']
+                                        'url' => $card['related_uris']['gatherer'] ?? $card['scryfall_uri']
                                     ]
                                 ],
                             ]
