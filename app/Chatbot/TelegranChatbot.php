@@ -71,7 +71,7 @@ class TelegramChatbot
         $response = json_decode($rawResponse->getBody(), true);
 
         $results = [];
-
+        $count = 0;
 
         if($response['object'] == 'list') {
 
@@ -80,6 +80,8 @@ class TelegramChatbot
                 if ($card['layout'] == 'transform') {
 
                     foreach ($card['card_faces'] as $face) {
+
+                        if($count >= 50) { break(2); }
 
                         $results[] = [
                             'type' => 'photo',
@@ -91,16 +93,21 @@ class TelegramChatbot
                                     [
                                         [
                                             'text' => 'Gatherer',
-                                            'url' => $card['related_uris']['gatherer']
+                                            'url' => $card['related_uris']['gatherer'] ?? $card['uri']
                                         ]
                                     ],
                                 ]
                             ],
                         ];
 
+                        $count++;
+
                     }
 
                 } else {
+
+                    if($count >= 50) { break; }
+
                     $results[] = [
                         'type' => 'photo',
                         'id' => $card['id'],
@@ -111,12 +118,15 @@ class TelegramChatbot
                                 [
                                     [
                                         'text' => 'Gatherer',
-                                        'url' => $card['related_uris']['gatherer']
+                                        'url' => $card['related_uris']['gatherer'] ?? $card['uri']
                                     ]
                                 ],
                             ]
                         ],
                     ];
+
+                    $count++;
+
                 }
 
             }
