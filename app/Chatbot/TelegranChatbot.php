@@ -22,8 +22,8 @@ class TelegramChatbot
         $chatId = $input['message']['chat']['id'];
         $messageId = $input['message']['message_id'];
 
-        $text = $input['message']['text'];
-        $entities = array_filter($input['message']['entities'], function($entity){ return $entity['type'] === 'bot_command'; });
+        $text = $input['message']['text'] ?? '';
+        $entities = array_filter($input['message']['entities'] ?? [], function($entity){ return $entity['type'] === 'bot_command'; });
 
         foreach ($entities as $entity) {
 
@@ -55,7 +55,6 @@ class TelegramChatbot
                 break;
             }
         }
-
 
     }
 
