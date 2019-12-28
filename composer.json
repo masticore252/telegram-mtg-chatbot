@@ -1,9 +1,9 @@
 {
-    "name": "laravel/laravel",
+    "name": "masticore252/telegram-mtg-chatbot",
     "type": "project",
-    "description": "The Laravel Framework.",
+    "description": "A telegram chatbot to get information about Magic: the gathering cards",
     "keywords": [
-        "framework",
+        "MTG",
         "laravel"
     ],
     "license": "MIT",
