@@ -27,15 +27,7 @@ class TelegramChatbot
 
         foreach ($entities as $entity) {
 
-            $commandStart = $entity['offset'];
-            $commandLength = $entity['length'];
-
-            $queryStart = 1 + $commandStart + $commandLength;
-            $queryEndPos = (mb_strlen($text) <= $commandLength) ? false : mb_strpos($text, "\n", $queryStart);
-            $queryEnd = $queryEndPos !== false ? $queryEndPos - $queryStart : null;
-
-            $command = mb_substr($text, $commandStart, $commandLength);
-            $query = mb_substr($text, $queryStart, $queryEnd);
+            $command = mb_substr($text, $entity['offset'], $entity['length']);
 
             switch ($command) {
                 case '/start':
@@ -48,10 +40,6 @@ class TelegramChatbot
 
                 case '/info':
                     $this->handleInfoCommand($chatId, $messageId);
-                break;
-
-                case '/card':
-                    $this->handleCardCommand($query, $chatId, $messageId);
                 break;
             }
         }
@@ -170,39 +158,12 @@ class TelegramChatbot
         $text .= "with all the functionality he wanted\n\n";
 
         $text .= "Also, I'm open source!\n";
-        $text .= "I'm being developed with PHP (yes, I know 🙄) and Laravel framework\n";
-        $text .= "you can se my code in my github repository: https://github.com/masticore252/telegram-mtg-chatbot.\n\n";
+        $text .= "I'm being developed with PHP and Laravel framework\n";
+        $text .= "you can se my code in this github repository: https://github.com/masticore252/telegram-mtg-chatbot.\n\n";
 
         $text .= "Got a suggestion? see something wrong with me? open an issue on my github\n";
         $text .= "or fix it yourself in a pull request, that would be awesome!\n";
         $this->sendMessage($chatId, $text, $messageId);
-    }
-
-    protected function handleCardCommand($query, $chatId, $messageId)
-    {
-        $url = 'https://api.scryfall.com/cards/named?'.http_build_query([ 'fuzzy' => $query ]);
-        $response = $this->httpClient->request('get', $url);
-        $data = json_decode($response->getBody(), true);
-
-        $cardData = [];
-
-        if($data['layout'] == 'transform') {
-
-            foreach ($data['card_faces'] as $face) {
-                $photos[] = [
-                    'type' => 'photo',
-                    'media' => $face['image_uris']['normal']
-                ];
-            }
-
-            return $this->sendMediaGroup($chatId, $photos, $messageId);
-
-        } else {
-
-            return $this->sendphoto($chatId, $data['image_uris']['normal'], $messageId);
-
-        }
-
     }
 
     protected function sendPhoto($chatId, $photo, $replyTo = false, $extra = [])
