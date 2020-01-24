@@ -2,19 +2,18 @@
 
 namespace App\Chatbot;
 
-use Throwable;
-use GuzzleHttp\Client as GuzzleClient;
+use App\Scryfall\ScryfallClient;
+use App\Telegram\TelegramClient;
 
 class TelegramChatbot
 {
-    protected $url;
+    protected $scryfallClient;
+    protected $telegramClient;
 
-    protected $httpClient;
-
-    public function __construct( GuzzleClient $httpClient)
+    public function __construct(ScryfallClient $scryfallClient, TelegramClient $telegramClient)
     {
-        $this->url = "https://api.telegram.org/bot".env('TELEGRAM_TOKEN');
-        $this->httpClient = $httpClient;
+        $this->telegramClient = $telegramClient;
+        $this->scryfallClient = $scryfallClient;
     }
 
     public function HandleMessage($input)
@@ -130,7 +129,7 @@ class TelegramChatbot
             ];
         }
 
-        $this->answerInlineQuery($id, $results, 60*60*24*7);
+        $this->telegramClient->answerInlineQuery($id, $results, 60*60*24*7);
     }
 
     protected function handleStartCommand($chatId, $messageId)
@@ -142,14 +141,13 @@ class TelegramChatbot
         $text .= "tap one to preview it, then tap ✅ to send it\n";
         $text .= "Easy peasy!\n\n";
         $text .= "I support more complex querys, type /help to know more\n\n";
-        // $text .= "Read all about it here: https://scryfall.com/docs/syntax\n\n";
-        $this->sendMessage($chatId, $text, $messageId);
+        $this->telegramClient->sendMessage($chatId, $text, $messageId);
     }
 
     protected function handleHelpCommand($chatId, $messageId)
     {
         $text = "Coming soon!\n";
-        $this->sendMessage($chatId, $text, $messageId);
+        $this->telegramClient->sendMessage($chatId, $text, $messageId);
     }
 
     protected function handleInfoCommand($chatId, $messageId)
@@ -163,81 +161,7 @@ class TelegramChatbot
 
         $text .= "Got a suggestion? see something wrong with me? open an issue on my github\n";
         $text .= "or fix it yourself in a pull request, that would be awesome!\n";
-        $this->sendMessage($chatId, $text, $messageId);
-    }
-
-    protected function sendPhoto($chatId, $photo, $replyTo = false, $extra = [])
-    {
-        $data = array_merge_recursive( $extra, [
-            'chat_id' => $chatId,
-            'photo' => $photo,
-            'reply_to_message_id' => $replyTo,
-        ]);
-
-        $url = $this->url.'/sendPhoto?'. http_build_query(array_filter($data));
-        $response = $this->httpClient->request('GET', $url);
-
-        return [
-            'telegran_request' => $data,
-            'telegran_response' => json_decode((string)$response->getBody(), true),
-            'endpoint' => '/sendPhoto',
-        ];
-    }
-
-    protected function sendMessage($chatId, $text, $replyTo = false, $extra = [])
-    {
-        $data = array_merge_recursive( $extra, [
-            'chat_id' => $chatId,
-            'text' => $text,
-            'reply_to_message_id' => $replyTo,
-        ]);
-
-        $url = $this->url.'/sendMessage?'. http_build_query(array_filter($data));
-        $response = $this->httpClient->request('GET', $url);
-
-        return [
-            'telegran_request' => $data,
-            'telegran_response' => json_decode((string)$response->getBody(), true),
-            'endpoint' => '/sendMessage'
-        ];
-    }
-
-    protected function sendMediaGroup($chatId, $media, $replyTo, $disableNotification = false)
-    {
-
-        $data = [
-            'chat_id' => $chatId,
-            'media' => $media,
-            'reply_to_message_id' => $replyTo,
-            'disable_notification' => $disableNotification
-        ];
-
-        $url = $this->url.'/sendMediaGroup';
-
-        $response = $this->httpClient->request('POST', $url, [
-            'body' => json_encode($data),
-            'headers' => [
-                'Content-Type' => 'application/json',
-            ],
-        ]);
-
-    }
-
-    protected function answerInlineQuery($id, $results, $cacheTime)
-    {
-        $url = $this->url.'/answerInlineQuery';
-        $data = [
-            'inline_query_id' => $id,
-            'results' => $results,
-            'cache_time' => $cacheTime
-        ];
-
-        $this->httpClient->request('POST', $url, [
-            'body' => json_encode($data),
-            'headers' => [
-                'Content-Type' => 'application/json',
-            ],
-        ]);
+        $this->telegramClient->sendMessage($chatId, $text, $messageId);
     }
 
 }
