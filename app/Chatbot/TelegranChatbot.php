@@ -48,18 +48,11 @@ class TelegramChatbot
     public function handleInlineQuery($input)
     {
         $id = $input['inline_query']['id'];
-        $query = [
-            'q' => $input['inline_query']['query']
-        ];
-
-        $url = 'https://api.scryfall.com/cards/search?'.http_build_query($query);
-        $rawResponse = $this->httpClient->request('get', $url, ['http_errors' => false]);
-        $response = json_decode($rawResponse->getBody(), true);
-
-        $results = [];
         $count = 0;
+        $results = [];
+        $response = $this->scryfallClient->search($input['inline_query']['query']);
 
-        if($response['object'] == 'list') {
+        if($response) {
 
             foreach ($response['data'] as $card) {
 
