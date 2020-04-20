@@ -13,7 +13,7 @@ class TelegramClient
         $this->url = "https://api.telegram.org/bot".env('TELEGRAM_TOKEN');
     }
 
-    protected function answerInlineQuery($id, $results, $cacheTime)
+    public function answerInlineQuery($id, $results, $cacheTime)
     {
         $url = $this->url.'/answerInlineQuery';
         $data = [
@@ -30,7 +30,7 @@ class TelegramClient
         ]);
     }
 
-    protected function sendMessage($chatId, $text, $replyTo = false, $extra = [])
+    public function sendMessage($chatId, $text, $replyTo = false, $extra = [])
     {
         $data = array_merge_recursive( $extra, [
             'chat_id' => $chatId,
@@ -48,7 +48,7 @@ class TelegramClient
         ];
     }
 
-    protected function sendPhoto($chatId, $photo, $replyTo = false, $extra = [])
+    public function sendPhoto($chatId, $photo, $replyTo = false, $extra = [])
     {
         $data = array_merge_recursive( $extra, [
             'chat_id' => $chatId,
@@ -66,7 +66,7 @@ class TelegramClient
         ];
     }
 
-    protected function sendMediaGroup($chatId, $media, $replyTo, $disableNotification = false)
+    public function sendMediaGroup($chatId, $media, $replyTo, $disableNotification = false)
     {
 
         $data = [
