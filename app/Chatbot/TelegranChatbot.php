@@ -52,7 +52,7 @@ class TelegramChatbot
         $results = [];
         $response = $this->scryfallClient->search($input['inline_query']['query']);
 
-        if($response) {
+        if($response['object'] === 'list') {
 
             foreach ($response['data'] as $card) {
 

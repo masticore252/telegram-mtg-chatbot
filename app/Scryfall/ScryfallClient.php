@@ -16,13 +16,9 @@ class ScryfallClient
 
     public function search($query)
     {
-        $url = $this->url.'/search?'.http_build_query(['q' => $query]);
+        $url = $this->url.'/cards/search?'.http_build_query(['q' => $query]);
         $rawResponse = $this->httpClient->request('get', $url, ['http_errors' => false]);
         $response = json_decode($rawResponse->getBody(), true);
-
-        if ($response['object'] !== 'list') {
-            return false;
-        }
 
         return $response;
     }
