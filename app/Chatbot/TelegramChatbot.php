@@ -52,11 +52,20 @@ class TelegramChatbot
         $results = [];
         $response = $this->scryfallClient->search($input['inline_query']['query']);
 
+        $doubleFaceLayouts = [
+            'modal_dfc',
+            'transform',
+            'double_faced_token',
+            'art_series',
+        ];
+
         if($response['object'] === 'list') {
 
             foreach ($response['data'] as $card) {
 
-                if ($card['layout'] == 'transform') {
+                $isDoubleFace = array_search($card['layout'], $doubleFaceLayouts) !== false;
+
+                if ($isDoubleFace) {
 
                     foreach ($card['card_faces'] as $face) {
 
